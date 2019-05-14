@@ -23,4 +23,4 @@ If there are enough items in stock, the user's request is filled. The "store" ak
 
 If there are not enough items in stock, the user will be prompted "insufficient quantity."
 
-## Link to see how Liri works
+## Link to see how Bamazon works
