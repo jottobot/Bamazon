@@ -54,17 +54,28 @@ function sale () {
   });
 }
 
+// I believe there is something wrong with my for loop here,
+// Loop through results[i].stock_quantity and log items that have less than 6
 function low () {
   var query = "SELECT * FROM products";
   connection.query(query, function (err, results) {
     if (err) throw err;
+
+    // if (results.length === 0) {
+    //     console.log("All items have more than 5 in stock.");
+    // }
+    // else {
+    //     console.log("These items have low stock:")
+    //     console.table(results);
+    // }
     
-    // if stock_quantity < 6, then log all of this inventory 
-    for (var i = 0; i > results.length; i++) {
-      if (results[i].stock_quantity < 100) {
-        console.log(results[i].product_name);  
+    // if stock_quantity < 5, then log all of this inventory 
+    for (var i = 0; i < results.length; i++) {
+      if (results[i].stock_quantity < 6) {
+        // console.log("These items are low in inventory:");     
+        // console.table(results);      
       } else {
-        console.log("All items have more than 5 in stock.");     
+        console.log("All items have more than 5 in stock.");  
       }
     }
   ask();
@@ -80,9 +91,9 @@ function inventory() {
     .prompt(
     [
       {
-      name: "inventoryItem",
+      name: "item",
       type: "input",
-      message: "Which item do you want to add more inventory to?",
+      message: "Which item do you want to add more inventory to? (Please enter with ID).",
       },
       {
       name: "inventory",
@@ -91,25 +102,76 @@ function inventory() {
       }
     ])
     .then(function (answer) {
-      
-      var item = answer.inventoryItem;
-      var add = answer.inventory;
 
       connection.query(
         "UPDATE products SET ? WHERE ?",
         [
           {
-            stock_quantity: (item.stock_quantity + add)
+            stock_quantity: (answer.inventory + answer.item.stock_quantity)
           },
           {
-            id: add.ID
+            id: answer.item
           }
         ],
       )
-      console.log("You added " + answer.inventory + " " + answer.inventoryItem + "(s) to the inventory.");
+      console.log("You added " + answer.inventory + " more item(s) successfully.");
       
       ask();
     });
+  });
+}
 
+// THIS WORKS
+function product () {
+  var query = "SELECT * FROM products";
+  connection.query(query, function (err, results) {
+    if (err) throw err;
+
+    inquirer
+    .prompt([
+      {
+        name: "item",
+        type: "input",
+        message: "What item do you want to add to the inventory?"
+      },
+      {
+        name: "department",
+        type: "input",
+        message: "Department of item?"
+      },
+      {
+        name: "price",
+        type: "input",
+        message: "What is the price per item?"
+      },
+      {
+        name: "quantity",
+        type: "input",
+        message: "How many items are you adding?",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      }
+    ])
+    .then(function(answer) {
+
+    connection.query(
+      "INSERT INTO products SET ?",
+      {
+        product_name: answer.item,
+        department_name: answer.department,
+        price: answer.price,
+        stock_quantity: answer.quantity,
+      },
+      function(err) {
+        if (err) throw err;
+        console.log("Your item was added successfully!");
+        ask();
+      }
+    );
+    })
   });
 }
