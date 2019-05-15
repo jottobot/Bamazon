@@ -1,7 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 
-
 var connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -11,16 +10,14 @@ var connection = mysql.createConnection({
 });
 
 
-// connect to the mysql server and sql database
 connection.connect(function (err) {
   if (err) throw err;
   console.log("Welcome to Bamazon Shopping! Here are the items we have on sale: ");
   start();
 });
 
-
 function start() {
-  var query = "SELECT * FROM products";
+  var query = "SELECT ID, product_name, price FROM products";
   connection.query(query, function (err, results) {
     if (err) throw err;
     console.table(results);
@@ -39,45 +36,43 @@ function start() {
           }
         ]
       )
-      .then(function(answer) {
-        var itemID = answer.ID;
-        var query = "SELECT * FROM products WHERE ID=" + itemID;
+      .then(function (answer) {
+        //query using the ID user selects in prompt
+        var query = "SELECT * FROM products WHERE ID=" + answer.ID;
         connection.query(query, function (err, results) {
           if (err) throw err;
-          
-          console.log("You have chosen " + itemID + " " + results[0].product_name + "(s)!");
-          
-        
+
+          console.log("You have chosen " + answer.quantity + " " + results[0].product_name + "(s)!");
+
           if (results[0].stock_quantity > answer.quantity) {
 
-                var price = answer.quantity * results[0].price;
-                console.log("Your grand total is $" + price + " .");
+            var price = answer.quantity * results[0].price;
+            console.log("Your grand total is $" + price + " .");
 
+            console.log("There are now " + (results[0].stock_quantity - answer.quantity) + " items left.");
 
-                console.log("There are now " + (results[0].stock_quantity - answer.quantity) + " items left.");
+            connection.query(
+              "UPDATE products SET ? WHERE ?",
+              [
+                {
+                  stock_quantity: (results[0].stock_quantity - answer.quantity)
+                },
+                {
+                  id: answer.ID
+                }
+              ],
 
-                connection.query(
-                  "UPDATE products SET ? WHERE ?",
-                  [
-                    {
-                      stock_quantity: (results[0].stock_quantity - answer.quantity)
-                    },
-                    {
-                      id: answer.ID
-                    }
-                  ],
-    
               function (error) {
                 if (error) throw err;
-               
+                start();
               },
             );
           } else {
-            console.log("Insufficient items!");
-            connection.end();
+            console.log("So sorry, we do not have " + answer.quantity + " " + results[0].product_name + "'s.");
+            start();
           }
-        });      
+        });
       });
   });
-} 
+}
 
