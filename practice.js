@@ -1,22 +1,4 @@
-var mysql = require("mysql");
-var inquirer = require("inquirer");
-
-var connection = mysql.createConnection({
-  host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "LMUgrad2014",
-  database: "bamazon_DB"
-});
-
-
-connection.connect(function (err) {
-  if (err) throw err;
-  console.log("Welcome to Bamazon Shopping! Here are the items we have on sale: ");
-  start();
-});
-
-function start() {
+function price() {
   var query = "SELECT ID, product_name, price FROM products";
   connection.query(query, function (err, results) {
     if (err) throw err;
@@ -64,15 +46,12 @@ function start() {
 
               function (error) {
                 if (error) throw err;
-                // start();
+                start();
               },
             );
           } else {
             console.log("So sorry, we do not have " + answer.quantity + " " + results[0].product_name + "'s.");
-            // start();
+            start();
           }
         });
       });
-  });
-}
-
