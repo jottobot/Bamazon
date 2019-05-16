@@ -26,7 +26,9 @@ If there are not enough items in stock, the user will be prompted "insufficient 
 If using Bamazon as the manager, the manager will be displayed all items in stock. From there the manager can check low inventory(items having less than 5 in stock), add inventory to a specific item and add a whole new item to the store. 
 
 ## Link to see how Bamazon works
-[Video example for Customer](https://drive.google.com/file/d/1wwhzaKQgP3x3hP3ivhRGJ0RbdqNwiHGn/view)
+[Video example for Customer](https://drive.google.com/file/d/15jB-hW8twaMaVKS8SCcunWNFFWyEWVUU/view)
 
-[Video example for Manager](https://drive.google.com/file/d/15jB-hW8twaMaVKS8SCcunWNFFWyEWVUU/view)
+[Video example for Manager](https://drive.google.com/file/d/1wwhzaKQgP3x3hP3ivhRGJ0RbdqNwiHGn/view)
+
+
 
