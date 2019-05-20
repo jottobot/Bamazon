@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var table = require("console.table");
 
 var connection = mysql.createConnection({
   host: "localhost",
@@ -70,9 +71,9 @@ function low () {
         console.log("These items have low stock:")
         console.table(results);
     }
-    
+    ask();
   });
-  ask();
+ 
 }
 
 // This function logs into the console but does not add to mysql :(
@@ -98,7 +99,7 @@ function inventory() {
     .then(function (answer) {
 
       connection.query(
-        "UPDATE products SET ? WHERE ?",
+        "UPDATE products SET stock_quantity WHERE item_id = ?",
         [
           {
             stock_quantity: (answer.inventory + answer.item.stock_quantity)
@@ -108,10 +109,12 @@ function inventory() {
           }
         ],
       )
-      console.log("You added " + answer.inventory + " more item(s) successfully.");    
+      console.log("You added " + answer.inventory + " more item(s) successfully.");  
+      ask();  
     });
+    
   });
-  ask();
+  
 }
 
 // THIS WORKS!
@@ -162,10 +165,9 @@ function product () {
       function(err) {
         if (err) throw err;
         console.log("Your item was added successfully!"); 
+        ask();
       }
-    );
-    })
-
+    ); 
+    })   
   });
-  ask();
 }
